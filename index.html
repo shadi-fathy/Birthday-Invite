@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Birthday Invitation</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: rgba(239,232,222,1);
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .scene {
+      width: 80vw;
+      max-width: 300px;
+      aspect-ratio: 3 / 2;
+      perspective: 1000px;
+      cursor: pointer;
+      z-index: 2;
+      animation: shake 1s infinite;
+    }
+
+    @keyframes shake {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(1deg); }
+      50% { transform: rotate(0deg); }
+      75% { transform: rotate(-1deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .card.spin {
+      animation: slowStartSpin 1s linear forwards,
+                 fastSpin 2s linear 1s forwards,
+                 hyperSpin 2s linear 3s forwards;
+    }
+
+    @keyframes slowStartSpin {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    @keyframes fastSpin {
+      0% { transform: rotateY(360deg); }
+      100% { transform: rotateY(2160deg); }
+    }
+
+    @keyframes hyperSpin {
+      0% { transform: rotateY(2160deg); }
+      100% { transform: rotateY(5400deg); }
+    }
+
+    .front, .back {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .front {
+      background-image: url('1.jpg');
+    }
+
+    .back {
+      background-image: url('1.jpg');
+      transform: rotateY(180deg);
+    }
+
+    .transition-image {
+      opacity: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90vw;
+      max-width: 500px;
+      height: auto;
+      border-radius: 6px;
+      z-index: 25;
+      pointer-events: none;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .invitation {
+      opacity: 0;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      width: 90vw;
+      max-width: 500px;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 100;
+      pointer-events: none;
+      transition: all 1s ease-out;
+    }
+
+    .opened .invitation {
+      opacity: 1;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(1.05);
+      pointer-events: auto;
+      z-index: 100;
+      animation: pop 0.8s ease, glow 2s ease-in-out infinite alternate, floatImage 3s ease-in-out infinite;
+    }
+
+    @keyframes pop {
+      0% { transform: translate(-50%, 0%) scale(0.9); opacity: 0; }
+      70% { transform: translate(-50%, -55%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+    }
+
+    @keyframes glow {
+      from { box-shadow: 0 0 10px rgba(255,255,0,0.5); }
+      to { box-shadow: 0 0 25px rgba(255,255,0,1); }
+    }
+
+    @keyframes floatImage {
+      0%, 100% { transform: translate(-50%, -50%) scale(1.05); }
+      50% { transform: translate(-50%, -53%) scale(1.07); }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -80px;
+      width: 50px;
+      height: 70px;
+      background: red;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.8;
+      z-index: 105;
+      animation: floatBalloon 6s linear infinite;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 20px;
+      background: #555;
+    }
+
+    @keyframes floatBalloon {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.05);
+        opacity: 1;
+      }
+    }
+
+    .overlay-text {
+      position: absolute;
+      top: 5%;
+      width: 100%;
+      text-align: center;
+      color: #ca486f;
+      font-size: 1.2rem;
+      font-weight: bold;
+      z-index: 110;
+      text-shadow: 2px 2px 8px #ca486f;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 2px solid #ca486f;
+      animation: pulse 2s infinite;
+    }
+
+    .overlay-text div:last-child {
+      font-size: 0.8rem;
+      margin-top: 10px;
+      color: #ca486f;
+      text-shadow: 1px 1px 4px #ca486f;
+    }
+
+    .overlay-text.move-bottom {
+      top: auto;
+      bottom: 5%;
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="overlay-text" id="overlayText">
+    <div>You have an invitation from <strong>Shadi</strong></div>
+    <div>Tap on the envelope to open it</div>
+  </div>
+
+  <div class="scene" onclick="handleClick(this)">
+    <div class="card">
+      <div class="front"></div>
+      <div class="back"></div>
+    </div>
+  </div>
+
+  <img class="transition-image" id="transitionImage" src="3.png" alt="Transition">
+  <img class="invitation" src="IMG_9186.JPG" alt="Invitation">
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+    let state = 0;
+
+    function handleClick(el) {
+      if (state === 0) {
+        const card = el.querySelector('.card');
+        card.classList.add('spin');
+        document.getElementById("overlayText").style.display = "none";
+        state = 1;
+
+        // Show transition image after 3.5s
+        setTimeout(() => {
+          document.getElementById("transitionImage").style.opacity = 1;
+        }, 3500);
+
+        // Show invitation image after 5s
+        setTimeout(() => {
+          document.body.classList.add('opened');
+          document.querySelector('.invitation').style.zIndex = 100;
+
+          confetti({
+            particleCount: 200,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+
+          const audio = new Audio('Tavalod[Bi-Kalam].mp3');
+          audio.currentTime = 9;
+          audio.play();
+
+          // Add balloons
+          for (let i = 0; i < 12; i++) {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.style.left = Math.random() * 100 + 'vw';
+            balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+            balloon.style.animationDelay = (Math.random() * 4) + 's';
+            document.body.appendChild(balloon);
+          }
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>

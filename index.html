@@ -49,8 +49,8 @@
 
     .card.spin {
       animation: slowStartSpin 1s linear forwards,
-                 fastSpin 2s linear 1s forwards,
-                 hyperSpin 2s linear 3s forwards;
+                 fastSpin 1s linear 1s forwards,
+                 hyperSpin 1s linear 2s forwards;
     }
 
     @keyframes slowStartSpin {
@@ -256,7 +256,7 @@
         // Show transition image after 3.5s
         setTimeout(() => {
           document.getElementById("transitionImage").style.opacity = 1;
-        }, 7000);
+        }, 2900);
 
         // Show invitation image after 5s
         setTimeout(() => {
@@ -282,7 +282,7 @@
             balloon.style.animationDelay = (Math.random() * 4) + 's';
             document.body.appendChild(balloon);
           }
-        }, 3500);
+        }, 3000);
       }
     }
   </script>
